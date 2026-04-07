@@ -2,7 +2,8 @@ import React from 'react'
 
 function ReqSide() {
   return (
-    <div className='w-[50%]'>
+    <div className='flex justify-center items-center flex-1 bg-gradient-to-br from-slate-500 via-gray-500 to-black'>
+      <div className='text-white font-bold text-4xl'>Request Side</div>
       
     </div>
   )
