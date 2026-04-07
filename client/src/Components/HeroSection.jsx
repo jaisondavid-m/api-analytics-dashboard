@@ -1,0 +1,19 @@
+import React from 'react'
+import Navbar from './Navbar'
+
+function HeroSection() {
+  return (
+    <div className='h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white flex flex-col'>
+        <Navbar/>
+        <div className='flex flex-1 flex-col justify-center items-center text-center px-6'>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">Monitor All Backend Logs</h1>
+          <p>Track API requests , debug issues and analayze user activity in real time</p>
+          <button className='px-8 py-3 m-5 cursor-pointer bg-blue-600 hover:bg-blue-700 transition duration-300 rounded-xl text-lg font-semibold shadow-lg hover:scale-105'>
+            View Logs
+          </button>
+        </div>
+    </div>
+  )
+}
+
+export default HeroSection
