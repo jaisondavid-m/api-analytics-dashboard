@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"server/config"
-	"net/http"
+	"server/routes"
 	"github.com/gin-gonic/gin"
 )
 func setupRoutes(r *gin.Engine) {
@@ -20,10 +20,7 @@ func main(){
 	}
 	defer sqlDB.Close()
 	r := gin.Default()
-	r.GET("/health",func(c *gin.Context) {
-		c.JSON(http.StatusOK,gin.H{"status":"ok"})
-	})
-	setupRoutes(r)
+	routes.SetUpRoutes(r)
 	log.Println("Server Running on Port 8000")
 	if err := r.Run(":8000");err!=nil{
 		log.Fatal(err)
