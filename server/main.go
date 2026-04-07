@@ -13,7 +13,11 @@ func setupRoutes(r *gin.Engine) {
 }
 func main(){
 	config.Connect()
-	defer config.DB.Close()
+	sqlDB,err := config.DB.DB()
+	if err!=nil{
+		log.Fatal("Failed to Load DataBase",err)
+	}
+	defer sqlDB.Close()
 	r := gin.Default()
 	r.GET("/health",func(c *gin.Context) {
 		c.JSON(http.StatusOK,gin.H{"status":"ok"})
