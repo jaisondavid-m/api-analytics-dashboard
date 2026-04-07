@@ -2,7 +2,7 @@ import React from 'react'
 
 function ReqSide() {
   return (
-    <div>
+    <div className='w-[50%]'>
       
     </div>
   )

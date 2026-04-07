@@ -13,6 +13,7 @@ func setupRoutes(r *gin.Engine) {
 }
 func main(){
 	config.Connect()
+	config.Migrate()
 	sqlDB,err := config.DB.DB()
 	if err!=nil{
 		log.Fatal("Failed to Load DataBase",err)

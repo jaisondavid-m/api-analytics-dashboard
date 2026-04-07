@@ -1,11 +1,11 @@
 import React from 'react'
 
-function LogPage() {
+function LogSide() {
   return (
-    <div>
+    <div className='w-[50%]'>
       
     </div>
   )
 }
 
-export default LogPage
+export default LogSide
