@@ -42,11 +42,11 @@ function AuthPage() {
         }
     }
     return (
-        <div className='h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center text-white px-4'>
+        <div className='min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center text-white px-4 sm:px-6'>
             <div className='bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 w-full max-w-md'>
-                <h1 className='text-2xl font-bold text-center mb-6'>API Analytics Site</h1>
-                <div className='bg-white p-6 rounded-2xl shadow-md w-96'>
-                    <div className='flex gap-4 mb-4 bg-white/10 rounded-xl p-1'>
+                <h1 className='text-xl sm:text-2xl font-bold text-center mb-6'>API Analytics Site</h1>
+                <div className='bg-white p-6 sm:p-8 rounded-2xl shadow-md w-full'>
+                    <div className='flex gap-2 sm:gap-4 mb-4 bg-white/10 rounded-xl p-1'>
                         <button className={`flex-1 rounded-2xl p-2 ${isLogin ? "bg-blue-500 text-white shadow-md" : "bg-gray-200 text-black"}`}
                             onClick={() => setIsLogin(true)}
                         >Login</button>
@@ -61,11 +61,11 @@ function AuthPage() {
                     )}
                     <div className='space-y-3 text-gray-800'>
                         {!isLogin && (
-                            <input type="text" name='name' placeholder='Enter Your Name' value={form.name} onChange={handleChange} className='w-full p-2 border rounded-xl' />
+                            <input type="text" name='name' placeholder='Enter Your Name' value={form.name} onChange={handleChange} className='w-full p-2 sm:p-3 border rounded-xl' />
                         )}
-                        <input type="text" name='user_id' placeholder={isLogin ? 'Enter Your User ID' : 'Set Your User ID'} value={form.user_id} onChange={handleChange} className='w-full p-2 border rounded-xl' />
-                        <input type="password" name='password' placeholder={isLogin ? 'Enter Your Password' : 'Set Your Password'} value={form.password} onChange={handleChange} className='w-full p-2 border rounded-xl' />
-                        <button disabled={isLoading} onClick={handleSubmit} className='w-full bg-blue-500 text-white p-2 rounded'>
+                        <input type="text" name='user_id' placeholder={isLogin ? 'Enter Your User ID' : 'Set Your User ID'} value={form.user_id} onChange={handleChange} className='w-full p-2 sm:p-3 border rounded-xl' />
+                        <input type="password" name='password' placeholder={isLogin ? 'Enter Your Password' : 'Set Your Password'} value={form.password} onChange={handleChange} className='w-full p-2 sm:p-3 border rounded-xl' />
+                        <button disabled={isLoading} onClick={handleSubmit} className='w-full bg-blue-500 text-white p-2 sm:p-3 rounded'>
                             {isLoading ? "Please wait..." : (isLogin ? "Login" : "Register")}
                         </button>
                     </div>
