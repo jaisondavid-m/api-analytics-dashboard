@@ -111,3 +111,28 @@ func Logout(c *gin.Context) {
 		"message": "Logged out successfully",
 	})
 }
+func Me(c *gin.Context) {
+	token , err := c.Cookie("token")
+	if err!=nil{
+		c.JSON(http.StatusUnauthorized,gin.H{"error":"No Token Provided"})
+		return
+	}
+	claims,err := utils.ParseToken(token)
+	if err!=nil{
+		c.JSON(http.StatusUnauthorized,gin.H{"error":"Invalid token"})
+		return
+	}
+	var user models.User
+	if err := config.DB.Where("user_id=?",claims.UserID).First(&user).Error; err!=nil {
+		c.JSON(http.StatusNotFound,gin.H{"error":"User Not found"})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{
+		"user":gin.H{
+			"user_id":user.UserID,
+			"name":user.Name,
+			"role":user.Role,
+			"last_login_at":user.LastLoginAt,
+		}
+	})
+}

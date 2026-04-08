@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { loginUser , registerUser } from '../api/auth'
+import { useNavigate } from "react-router-dom"
 
 function AuthPage() {
     const [isLogin, setIsLogin] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
     const [message, setMessage] = useState("")
     const [type, setType] = useState("")
+    const navigate = useNavigate()
     const [form, setForm] = useState({
         name: "",
         user_id: "",
@@ -31,7 +33,7 @@ function AuthPage() {
             setType("success")
             setMessage(res.data.message)
             setTimeout(() => {
-                window.location.href = "/home"
+                navigate("/home")
             }, 1000);
         } catch (err) {
             setType("error")
