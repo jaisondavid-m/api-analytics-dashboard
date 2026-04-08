@@ -17,29 +17,36 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		var bodyByte []byte
-		var maskedBody string
-		var bodyMap map[string]interface{}
 		if c.Request.Body != nil {
-			bodyByte, _ = io.ReadAll(c.Request.Body)
+			bodyByte,_ = io.ReadAll(c.Request.Body)
 		}
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyByte))
+		defer func(){
+			if rec := recover(); rec != nil {
+				c.Writer.WriteHeader(500)
+				log.Println("Recovered From Panic: ",rec)
+			}
+		}()
 		c.Next()
 		latency := time.Since(start).Milliseconds()
 		status := c.Writer.Status()
 		method := c.Request.Method
 		path := c.Request.URL.Path
 		ip := c.ClientIP()
-
 		userID, _ := c.Get("user_id")
-
-		if err := json.Unmarshal(bodyByte, &bodyMap); err == nil {
-			if _, ok := bodyMap["password"]; ok {
-				bodyMap["password"] = "*******"
+		
+		maskedBody := ""
+		var bodyMap map[string]interface{}
+		if len(bodyByte) > 0 {
+			if err := json.Unmarshal(bodyByte,&bodyMap); err == nil {
+				if _,ok := bodyMap["password"]; ok {
+					bodyMap["password"] = "******"
+				}
+				maskedJSON,_ := json.Marshal(bodyMap)
+				maskedBody = string(maskedJSON)
 			} else {
 				maskedBody = string(bodyByte)
 			}
-			maskedJSON , _ := json.Marshal(bodyMap)
-			maskedBody = string(maskedJSON)
 		}
 
 		logEntry := models.RequestLog{
@@ -50,6 +57,9 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 			Latency:     latency,
 			IPAddress:   ip,
 			RequestBody: maskedBody,
+		}
+		if userID != nil {
+			logEntry.UserID = userID.(string)
 		}
 		go func() {
 			if err := db.Create(&logEntry).Error; err != nil {

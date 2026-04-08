@@ -36,4 +36,7 @@ func SetUpRoutes(r *gin.Engine) {
 		test.PATCH("/patch",handlers.TestPatch)
 		test.DELETE("/delete",handlers.TestDelete)
 	}
+	r.NoRoute(func(c *gin.Context){
+		c.JSON(http.StatusNotFound,gin.H{"error":"Route Not FOund"})
+	})
 }

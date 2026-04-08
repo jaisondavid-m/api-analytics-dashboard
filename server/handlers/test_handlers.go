@@ -38,7 +38,7 @@ func TestPut(c *gin.Context) {
 		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
-	successResponse(c,http.StatusOK,"PUT request successful",gin.H{"method":"PUT","updated":body,})
+	successResponse(c,http.StatusAccepted,"PUT request successful",gin.H{"method":"PUT","updated":body,})
 }
 
 func TestPatch(c *gin.Context) {
