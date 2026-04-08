@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"server/config"
+	"server/middleware"
 	"server/routes"
 
 	"github.com/gin-contrib/cors"
@@ -25,12 +26,15 @@ func main(){
 	defer sqlDB.Close()
 
 	r := gin.Default()
+	r.SetTrustedProxies(nil)
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:5173"},
 		AllowMethods: []string{"GET","POST"},
 		AllowHeaders: []string{"Origin","Content-Type"},
 		AllowCredentials: true,
 	}))
+	r.Use(middleware.OptionalAuth())
+	r.Use(middleware.RequestLogger(config.DB))
 	routes.SetUpRoutes(r)
 
 	log.Println("Server Running on Port 8000")

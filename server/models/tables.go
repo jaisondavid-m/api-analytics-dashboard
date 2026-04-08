@@ -16,3 +16,14 @@ type User struct {
 	CreatedAt 		time.Time
 	UpdatedAt 		time.Time
 }
+type RequestLog struct {
+	ID          int        `gorm:"primaryKey"`
+	UserID      string     
+	Method      string     
+	RequestBody string 		`gorm:"type:text"`
+	Path        string    
+	StatusCode  int        
+	Latency     int64  	  
+	IPAddress 	string
+	CreatedAt   time.Time  
+}

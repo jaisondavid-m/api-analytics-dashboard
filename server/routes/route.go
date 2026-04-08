@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"server/handlers"
+	"server/middleware"
 	"server/utils"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,10 @@ func SetUpRoutes(r *gin.Engine){
 		auth.POST("/logout",handlers.Logout)
 		auth.GET("/check-user",utils.CheckUserExists)
 		auth.GET("/refresh",handlers.Refresh)
-		auth.GET("/me",handlers.Me)
+	}
+	protected := auth.Group("/")
+	protected.Use(middleware.AuthMiddleware())
+	{
+		protected.GET("/me",handlers.Me)
 	}
 }
