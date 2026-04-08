@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { getCurrentUser } from "../api/auth"
+import { getCurrentUser, RefreshToken } from "../api/auth"
 
 const AuthContext = createContext()
 
@@ -11,7 +11,13 @@ export const AuthProvider = ({ children }) => {
             const res = await getCurrentUser()
             setUser(res.data.user)
         } catch (err) {
-            setUser(null)
+            try {
+                await RefreshToken()
+                const res = await getCurrentUser()
+                setUser(res.data.user)
+            } catch (error) {
+                setUser(null)
+            }
         } finally {
             setLoading(false)
         }

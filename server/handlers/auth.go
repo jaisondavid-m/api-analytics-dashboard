@@ -46,12 +46,10 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Regiser"})
 		return
 	}
-	token, err := utils.GenerateToken(user.UserID, user.Role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
-		return
-	}
-	utils.SetCookie(c, token)
+	// token, err := utils.GenerateToken(user.UserID, user.Role)
+	accessToken , _ := utils.GenerateAccessToken(user.UserID,user.Role)
+	refreshToken, _ := utils.GenerateRefreshToken(user.UserID)
+	utils.SetCookie(c, accessToken , refreshToken)
 	c.JSON(http.StatusCreated, gin.H{"message": "User Register Successfully & Logged in"})
 }
 
@@ -86,23 +84,30 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update login info"})
 		return
 	}
-	token, err := utils.GenerateToken(user.UserID, user.Role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
-		return
-	}
-	utils.SetCookie(c, token)
+	// token, err := utils.GenerateToken(user.UserID, user.Role)
+	accessToken , _ := utils.GenerateAccessToken(user.UserID,user.Role)
+	refreshToken, _ := utils.GenerateRefreshToken(user.UserID)
+	utils.SetCookie(c, accessToken , refreshToken)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login Successfully",
 	})
 }
 func Logout(c *gin.Context) {
 	c.SetCookie(
-		"token",
+		"access_token",
 		"",
 		-1,
 		"/",
+		"localhost",
+		false,
+		true,
+	)
+	c.SetCookie(
+		"refresh_token",
 		"",
+		-1,
+		"/",
+		"localhost",
 		false,
 		true,
 	)
@@ -112,7 +117,7 @@ func Logout(c *gin.Context) {
 	})
 }
 func Me(c *gin.Context) {
-	token, err := c.Cookie("token")
+	token, err := c.Cookie("access_token")
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "No Token Provided"})
 		return

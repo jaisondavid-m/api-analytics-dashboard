@@ -20,22 +20,31 @@ func getSecretBytes() ([]byte, error) {
 	}
 	return []byte(secret), nil
 }
-
-func GenerateToken(UserID string, role string) (string, error) {
-	secret, err := getSecretBytes()
-	if err != nil {
-		return "", err
+func GenerateAccessToken(userID string,role string) (string,error) {
+	secret , err := getSecretBytes()
+	if err!=nil{
+		return "",err
 	}
-
 	claims := jwt.MapClaims{
-		"user_id": UserID,
-		"role":    role,
-		"exp":     time.Now().Add(24 * time.Hour).Unix(),
+		"user_id":userID,
+		"role":role,
+		"exp":time.Now().Add(15*time.Minute).Unix(),
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,claims)
 	return token.SignedString(secret)
 }
-
+func GenerateRefreshToken(userID string) (string,error){
+	secret,err:=getSecretBytes()
+	if err!=nil{
+		return "",err
+	}
+	claims := jwt.MapClaims{
+		"user_id":userID,
+		"exp":time.Now().Add(7*24*time.Hour).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,claims)
+	return token.SignedString(secret)
+}
 func ParseToken(tokenStr string) (*models.Claims, error) {
 	secret, err := getSecretBytes()
 	if err != nil {

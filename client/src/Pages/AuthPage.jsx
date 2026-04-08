@@ -21,7 +21,8 @@ function AuthPage() {
             [e.target.name]: e.target.value,
         })
     }
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         try {
             setIsLoading(true)
             setMessage("")
@@ -67,16 +68,16 @@ function AuthPage() {
                             {message}
                         </div>
                     )}
-                    <div className='space-y-3 text-gray-800'>
+                    <form onSubmit={handleSubmit} className='space-y-3 text-gray-800'>
                         {!isLogin && (
                             <input type="text" name='name' placeholder='Enter Your Name' value={form.name} onChange={handleChange} className='w-full p-2 sm:p-3 border rounded-xl' />
                         )}
                         <input type="text" name='user_id' placeholder={isLogin ? 'Enter Your User ID' : 'Set Your User ID'} value={form.user_id} onChange={handleChange} className='w-full p-2 sm:p-3 border rounded-xl' />
                         <input type="password" name='password' placeholder={isLogin ? 'Enter Your Password' : 'Set Your Password'} value={form.password} onChange={handleChange} className='w-full p-2 sm:p-3 border rounded-xl' />
-                        <button disabled={isLoading} onClick={handleSubmit} className='w-full bg-blue-500 text-white p-2 sm:p-3 rounded'>
+                        <button disabled={isLoading} type='submit' className='w-full bg-blue-500 text-white p-2 sm:p-3 rounded'>
                             {isLoading ? "Please wait..." : (isLogin ? "Login" : "Register")}
                         </button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
