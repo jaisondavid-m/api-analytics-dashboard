@@ -35,6 +35,7 @@ func main(){
 	}))
 	r.Use(middleware.OptionalAuth())
 	r.Use(middleware.RequestLogger(config.DB))
+	r.Use(middleware.LatencyMiddleware())
 	routes.SetUpRoutes(r)
 
 	log.Println("Server Running on Port 8000")

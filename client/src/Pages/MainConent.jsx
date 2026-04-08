@@ -5,9 +5,9 @@ import Navbar from '../Components/Navbar'
 
 function MainConent() {
     return (
-        <div className='min-h-screen flex flex-col'>
+        <div className='h-screen flex flex-col overflow-hidden'>
             <Navbar />
-            <div className='flex flex-1'>
+            <div className='flex flex-1 overflow-hidden'>
                 <LogSide />
                 <ReqSide />
             </div>
