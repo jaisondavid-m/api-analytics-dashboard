@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from "axios"
+import { loginUser , registerUser } from '../api/auth'
 
 function AuthPage() {
     const [isLogin, setIsLogin] = useState(true)
@@ -26,10 +26,9 @@ function AuthPage() {
                 setMessage("All fields are required")
                 return
             }
-            const url = isLogin ? "http://localhost:8000/auth/login" : "http://localhost:8000/auth/register"
             const payload = isLogin ? { user_id: form.user_id, password: form.password } : form
-            const res = await axios.post(url, payload, { withCredentials: true })
-            setType("sucess")
+            const res = isLogin ? await loginUser(payload) : await registerUser(payload)
+            setType("success")
             setMessage(res.data.message)
             setTimeout(() => {
                 window.location.href = "/home"
