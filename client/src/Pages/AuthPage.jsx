@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import { loginUser , registerUser } from '../api/auth'
+import React, { useEffect, useState } from 'react'
+import { getCurrentUser, loginUser, registerUser } from '../api/auth'
 import { useNavigate } from "react-router-dom"
+import { useAuth } from '../context/AuthContext'
 
 function AuthPage() {
+    const { setUser , user,loading } = useAuth()
     const [isLogin, setIsLogin] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
     const [message, setMessage] = useState("")
@@ -23,18 +25,18 @@ function AuthPage() {
         try {
             setIsLoading(true)
             setMessage("")
-            if (isLogin ? ( !form.user_id   || !form.password) : (!form.name || !form.user_id   || !form.password )) {
+            if (isLogin ? (!form.user_id || !form.password) : (!form.name || !form.user_id || !form.password)) {
                 setType("error")
                 setMessage("All fields are required")
                 return
             }
             const payload = isLogin ? { user_id: form.user_id, password: form.password } : form
             const res = isLogin ? await loginUser(payload) : await registerUser(payload)
+            const me = await getCurrentUser()
+            setUser(me.data.user)
             setType("success")
             setMessage(res.data.message)
-            setTimeout(() => {
-                navigate("/home")
-            }, 1000);
+            navigate("/home")
         } catch (err) {
             setType("error")
             setMessage(err.response?.data?.error || "Failed to Login/Register")
@@ -42,6 +44,11 @@ function AuthPage() {
             setIsLoading(false)
         }
     }
+    useEffect(()=>{
+        if(!loading && user){
+            navigate("/home")
+        }
+    },[user,loading])
     return (
         <div className='min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center text-white px-4 sm:px-6'>
             <div className='bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 w-full max-w-md'>

@@ -17,5 +17,6 @@ func SetUpRoutes(r *gin.Engine){
 		auth.POST("/login",handlers.Login)
 		auth.POST("/logout",handlers.Logout)
 		auth.GET("/check-user",utils.CheckUserExists)
+		auth.GET("/me",handlers.Me)
 	}
 }

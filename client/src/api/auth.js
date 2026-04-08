@@ -7,3 +7,11 @@ export const loginUser = (data)=>{
 export const registerUser = (data)=>{
     return api.post("/auth/register",data)
 }
+
+export const logoutUser = ()=>{
+    return api.post("/auth/logout")
+}
+
+export const getCurrentUser = ()=>{
+    return api.get("/auth/me")
+}
