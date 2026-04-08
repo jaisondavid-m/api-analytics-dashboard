@@ -28,4 +28,12 @@ func SetUpRoutes(r *gin.Engine) {
 		protected.GET("/me", handlers.Me)
 		protected.GET("/logs", handlers.GetLogs(config.DB))
 	}
+	test := r.Group("/test")
+	{
+		test.GET("/get",handlers.TestGet)
+		test.POST("/post",handlers.TestPost)
+		test.PUT("/put",handlers.TestPut)
+		test.PATCH("/patch",handlers.TestPatch)
+		test.DELETE("/delete",handlers.TestDelete)
+	}
 }
