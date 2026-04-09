@@ -3,10 +3,10 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"server/models"
+	"server/handlers"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -48,9 +48,20 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 				maskedBody = string(bodyByte)
 			}
 		}
-
+		var uid *uint
+		if userID != nil {
+			switch v := userID.(type) {
+			case uint:
+				uid = &v
+			case string:
+				var user models.User
+				if err := db.Select("id").Where("user_id = ?", v).First(&user).Error; err == nil {
+					uid = &user.ID
+				}
+			}
+		}
 		logEntry := models.RequestLog{
-			UserID:      fmt.Sprint(userID),
+			UserID:      uid,
 			Method:      method,
 			Path:        path,
 			StatusCode:  status,
@@ -58,13 +69,13 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 			IPAddress:   ip,
 			RequestBody: maskedBody,
 		}
-		if userID != nil {
-			logEntry.UserID = userID.(string)
-		}
 		go func() {
 			if err := db.Create(&logEntry).Error; err != nil {
 				log.Println("log error", err)
 			}
 		}()
+		if uid != nil {
+			handlers.UpdateAnalytics(db,*uid,path,method,ip)
+		}
 	}
 }

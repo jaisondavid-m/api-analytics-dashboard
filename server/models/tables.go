@@ -18,7 +18,7 @@ type User struct {
 }
 type RequestLog struct {
 	ID          uint        `gorm:"primaryKey"`
-	UserID      uint		`gorm:"not null"`    
+	UserID      *uint    
 	User		User		`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"` 
 	Method      string     
 	RequestBody string 		`gorm:"type:text"`
@@ -30,9 +30,29 @@ type RequestLog struct {
 }
 type UserAPIUsage struct {
 	ID				uint		`gorm:"primaryKey"`
-	UserID 			string		`gorm:"size:250"`
+	UserID 			uint		`gorm:"size:250;uniqueIndex"`
 	TotalRequests	int64 		`gorm:"default:0"`
 	LastRequestAt 	time.Time
 }
 
-type
+type EndPointUsage struct {
+	ID 				uint 		`gorm:"primaryKey"`
+	Path 			string 		`gorm:"size:500;uniqueIndex:idx_path_method"`
+	Method 			string 		`gorm:"size:10;uniqueIndex:idx_path_method"`
+	TotalHits 		int64 		`gorm:"default:0"`
+	LastAccessedAt 	time.Time
+}
+
+type CountryUsage struct {
+	ID 				uint 		`gorm:"primaryKey"`
+	Country		 	string 		`gorm:"size:100;uniqueIndex"`
+	TotalRequests 	int64		`gorm:"default:0"`
+	UpdatedAt		time.Time
+}
+
+type DailyUsage struct {
+	ID 				uint 		`gorm:"primaryKey"`
+	Date 			time.Time 	`gorm:"type:date;uniqueIndex:unique_user_date"`
+	UserID 			uint 		`gorm:"uniqueIndex:unique_user_date"`
+	TotalRequests 	int64 		`gorm:"default:0"`
+}
