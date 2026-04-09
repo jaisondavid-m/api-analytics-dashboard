@@ -35,6 +35,12 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "Logs", path: "/logs" },
+    { name: "Profile", path: "/profile" },
+  ]
+
   return (
     <motion.div
       initial={{ y: -20, opacity: 0 }}
@@ -51,42 +57,80 @@ function Navbar() {
           <div className='w-9 h-9 flex items-center justify-center rounded-xl bg-blue-600 text-white font-bold shadow'>A</div>
           <h1 className='text-xl font-bold text-gray-800 tracking-wide'>API ANALYTICS</h1>
         </motion.div>
-        <div className="flex items-center gap-4">
-          <motion.span
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            className='hidden sm:inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700'
-          >● Live
-          </motion.span>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
+        <div className='hidden md:flex items-center gap-6'>
+          {navItems.map((item) => (
+            <motion.button
+              key={item.name}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate(item.path)}
+              className='text-gray-700 font-medium cursor-pointer'
+            >
+              {item.name}
+            </motion.button>
+          ))}
+          <motion.button
+            whileHover={{ scale: 1.05, backgroundColor: "#fef2f2" }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setOpen(!open)} className='flex items-center gap-2 bg-gray-100 hover:bg-gray-200 transition px-3 py-1.5 rounded-full cursor-pointer'
+            onClick={handleLogout}
+            className='text-red-500 font-medium px-3 py-1 rounded hover:bg-red-50 cursor-pointer'
           >
-            <div className='w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-semibold'>A</div>
-            <span className='text-sm font-medium text-gray-700'>Admin</span>
-          </motion.div>
+            Logout
+          </motion.button>
+        </div>
+        <div className='md:hidden relative' ref={menuRef}>
+          <button
+            onClick={() => setOpen(!open)}
+            className='flex flex-col gap-1.5 w-6 h-5 justify-center items-center cursor-pointer'
+          >
+            <span className={`h-0.5 w-full bg-gray-700 transition-transform ${open ? "rotate-45 translate-y-1.5" : ""}`}></span>
+            <span className={`h-0.5 w-full bg-gray-700 transition-opacity ${open ? "opacity-0" : ""} `}></span>
+            <span className={`h-0.5 w-full bg-gray-700 transition-transform ${open ? "-rotate-45 -translate-y-1.5" : ""} `}></span>
+          </button>
+          <AnimatePresence>
+            {open && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.5 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setOpen(false)}
+                  className='fixed inset-0 bg-black z-40'
+                />
+                <motion.div
+                  initial={{ x: '100%' }}
+                  animate={{ x:0 }}
+                  exit={{ x:'100%' }}
+                  transition={{ type:'spring' , stiffness:300 , damping:30 }}
+                  className='fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 flex flex-colp-6 gap=4'
+                  ref={menuRef}
+                >
+                  {navItems.map((item) => (
+                    <motion.button
+                      key={item.name}
+                      whileHover={{ backgroundColor: "#f3f4f6" }}
+                      onClick={() => {
+                        navigate(item.path)
+                        setOpen(false)
+                      }}
+                      className='text-gray-700 font-medium px-3 py-2 text-left rounded'
+                    >
+                      {item.name}
+                    </motion.button>
+                  ))}
+                  <motion.button
+                    whileHover={{ backgroundColor: "#fef2f2" }}
+                    onClick={handleLogout}
+                    className='text-red-500 font-medium px-3 py-2 text-left rounded'
+                  >
+                    Log Out
+                  </motion.button>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-      <AnimatePresence>
-        {open && (
-          <motion.div 
-            className='absolute right-6 top-14 bg-white shadow-md rounded-lg p-2'
-            initial={{opacity:0,scale:0.9,y:-10}}
-            animate={{opacity:1,scale:1,y:0}}
-            exit={{opacity:0,scale:0.9,y:-10}}
-            transition={{duration:0.15}}
-          >
-            <motion.button
-             whileHover={{backgroundColor:"#f3f4f6"}}
-             onClick={handleLogout} 
-             className='text-sm text-red-500 hover:bg-gray-100 px-2 py-1 rounded w-full text-left'
-            >
-              Logout
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
     </motion.div>
   )
 }

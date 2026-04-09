@@ -17,8 +17,9 @@ type User struct {
 	UpdatedAt 		time.Time
 }
 type RequestLog struct {
-	ID          int        `gorm:"primaryKey"`
-	UserID      string     
+	ID          uint        `gorm:"primaryKey"`
+	UserID      uint		`gorm:"not null"`    
+	User		User		`gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"` 
 	Method      string     
 	RequestBody string 		`gorm:"type:text"`
 	Path        string    
@@ -27,3 +28,11 @@ type RequestLog struct {
 	IPAddress 	string
 	CreatedAt   time.Time  
 }
+type UserAPIUsage struct {
+	ID				uint		`gorm:"primaryKey"`
+	UserID 			string		`gorm:"size:250"`
+	TotalRequests	int64 		`gorm:"default:0"`
+	LastRequestAt 	time.Time
+}
+
+type
