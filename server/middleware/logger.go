@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"io"
 	"log"
-	"server/models"
 	"server/handlers"
+	"server/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -18,13 +18,13 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 		start := time.Now()
 		var bodyByte []byte
 		if c.Request.Body != nil {
-			bodyByte,_ = io.ReadAll(c.Request.Body)
+			bodyByte, _ = io.ReadAll(c.Request.Body)
 		}
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyByte))
-		defer func(){
+		defer func() {
 			if rec := recover(); rec != nil {
 				c.Writer.WriteHeader(500)
-				log.Println("Recovered From Panic: ",rec)
+				log.Println("Recovered From Panic: ", rec)
 			}
 		}()
 		c.Next()
@@ -34,15 +34,15 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 		path := c.Request.URL.Path
 		ip := c.ClientIP()
 		userID, _ := c.Get("user_id")
-		
+
 		maskedBody := ""
 		var bodyMap map[string]interface{}
 		if len(bodyByte) > 0 {
-			if err := json.Unmarshal(bodyByte,&bodyMap); err == nil {
-				if _,ok := bodyMap["password"]; ok {
+			if err := json.Unmarshal(bodyByte, &bodyMap); err == nil {
+				if _, ok := bodyMap["password"]; ok {
 					bodyMap["password"] = "******"
 				}
-				maskedJSON,_ := json.Marshal(bodyMap)
+				maskedJSON, _ := json.Marshal(bodyMap)
 				maskedBody = string(maskedJSON)
 			} else {
 				maskedBody = string(bodyByte)
@@ -75,7 +75,7 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 			}
 		}()
 		if uid != nil {
-			handlers.UpdateAnalytics(db,*uid,path,method,ip)
+			handlers.UpdateAnalytics(db, *uid, path, method, ip)
 		}
 	}
 }
