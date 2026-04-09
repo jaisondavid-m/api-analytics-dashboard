@@ -27,6 +27,12 @@ func SetUpRoutes(r *gin.Engine) {
 	{
 		protected.GET("/me", handlers.Me)
 		protected.GET("/logs", handlers.GetLogs(config.DB))
+		protected.GET("/users",handlers.GetUsers(config.DB))
+		protected.GET("/usage/users",handlers.GetUserAPIUsage(config.DB))
+		protected.GET("/usage/countries",handlers.GetCountryUsage(config.DB))
+		protected.GET("/usage/daily",handlers.GetDailyUsage(config.DB))
+		protected.GET("/usage/daily/:user_id",handlers.GetUserDailyUsage(config.DB))
+		protected.GET("/users/:user_id/dashboard",handlers.GetUserDashboard(config.DB))
 	}
 	test := r.Group("/test")
 	{
