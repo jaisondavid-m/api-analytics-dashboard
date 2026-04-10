@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"time"
+	"server/utils"
 
 	"gorm.io/gorm"
 )
@@ -40,7 +41,7 @@ func UpdateAnalytics(db *gorm.DB,uid uint,path,method,ip string) {
 		log.Println("daily_usage error:",err)
 	}
 
-	country := "India"
+	country := utils.GetCountryFromIP(ip)
 
 	if err := db.Exec(`
 		INSERT INTO country_usages (country, total_requests, updated_at)

@@ -39,6 +39,8 @@ function Navbar() {
     { name: "Home", path: "/" },
     { name: "Logs", path: "/logs" },
     { name: "Profile", path: "/profile" },
+    { name: "UserList" , path: "/users" },
+    { name: "Analytics" , path: "/analytics" }
   ]
 
   return (

@@ -30,7 +30,7 @@ func GetUserDashboard(db *gorm.DB) gin.HandlerFunc {
 		var lastRequest models.RequestLog
 
 		db.Model(&models.RequestLog{}).Where("user_id=?",userId).Count(&totalRequests)
-		db.Where("user_id=?",userId).Order("create_at DESC").First(&lastRequest)
+		db.Where("user_id=?",userId).Order("created_at DESC").First(&lastRequest)
 
 		c.JSON(http.StatusOK,gin.H{
 			"total_requests":totalRequests,

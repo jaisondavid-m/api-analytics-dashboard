@@ -24,6 +24,7 @@ function LogSide() {
     PATCH: "bg-indigo-500",
     DELETE: "bg-red-500",
   }
+  
   useEffect(() => {
     fetchLogs()
     let interval
@@ -41,7 +42,7 @@ function LogSide() {
   }, [logs, isLive])
 
   return (
-    <div className='flex flex-col flex-1 bg-gradient-to-br from-slate-800 via-gray-800 to-black p-4'>
+    <div className='flex flex-col gap-4 flex-1 bg-gradient-to-br from-slate-800 via-gray-800 to-black p-4'>
       <div className='sticky top-0 z-10 bg-black/70 backdrop-blur-md p-4 border-b border-gray-600 rounded-xl border border-white'>
         <h1 className='text-white text-bold text-2xl mb-4'>Request Logs</h1>
         <button

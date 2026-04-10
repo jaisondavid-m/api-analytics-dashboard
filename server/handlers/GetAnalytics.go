@@ -31,12 +31,13 @@ func GetUsers(db *gorm.DB) gin.HandlerFunc {
 
 func GetUserAPIUsage(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var usage []models.UserAPIUsage
-		if err := db.Find(&usage).Error; err != nil {
+		var result []models.Result
+		err := db.Table("user_api_usages").Select("users.user_id,users.name,user_api_usages.total_requests,user_api_usages.last_request_at").Joins("JOIN users ON users.id = user_api_usages.user_id").Scan(&result).Error
+		if err != nil {
 			c.JSON(http.StatusInternalServerError,gin.H{"error":"Failed to Fetch usage"})
 			return
 		}
-		c.JSON(http.StatusOK,usage)
+		c.JSON(http.StatusOK,result)
 	}
 }
 
@@ -77,7 +78,7 @@ func GetUserDailyUsage(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID := c.Param("user_id")
 		var daily []models.DailyUsage
-		if err := db.Where("user_id=>",userID).Order("date DESC").Find(&daily).Error; err != nil {
+		if err := db.Where("user_id = ? ",userID).Order("date DESC").Find(&daily).Error; err != nil {
 			c.JSON(http.StatusInternalServerError,gin.H{
 				"error":"Failed to fetch user daily usage",
 			})
