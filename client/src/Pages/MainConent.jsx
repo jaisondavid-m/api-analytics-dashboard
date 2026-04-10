@@ -8,10 +8,10 @@ function MainConent() {
         <div className='h-screen flex flex-col overflow-hidden bg-[#0b1220]'>
             <Navbar />
             <div className='flex flex-1 overflow-hidden'>
-                <div className='w-[40%] border-r border-gray-800'>
+                <div className='w-[50%] border-r border-gray-800'>
                     <LogSide />
                 </div>
-                <div className='w-[%60]'>
+                <div className='w-[50%]'>
                     <ReqSide />
                 </div>
             </div>
