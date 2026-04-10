@@ -5,11 +5,15 @@ import Navbar from '../Components/Navbar'
 
 function MainConent() {
     return (
-        <div className='h-screen flex flex-col overflow-hidden'>
+        <div className='h-screen flex flex-col overflow-hidden bg-[#0b1220]'>
             <Navbar />
             <div className='flex flex-1 overflow-hidden'>
-                <LogSide />
-                <ReqSide />
+                <div className='w-[40%] border-r border-gray-800'>
+                    <LogSide />
+                </div>
+                <div className='w-[%60]'>
+                    <ReqSide />
+                </div>
             </div>
         </div>
     )

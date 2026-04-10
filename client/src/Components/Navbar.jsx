@@ -25,22 +25,22 @@ function Navbar() {
     navigate("/", { replace: true })
   }
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+  // useEffect(() => {
+  //   const handleClickOutside = (e) => {
+  //     if (menuRef.current && !menuRef.current.contains(e.target)) {
+  //       setOpen(false)
+  //     }
+  //   }
+  //   document.addEventListener("mousedown", handleClickOutside)
+  //   return () => document.removeEventListener("mousedown", handleClickOutside)
+  // }, [])
 
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Logs", path: "/logs" },
     { name: "Profile", path: "/profile" },
-    { name: "UserList" , path: "/users" },
-    { name: "Analytics" , path: "/analytics" }
+    { name: "UserList", path: "/users" },
+    { name: "Analytics", path: "/analytics" }
   ]
 
   return (
@@ -101,21 +101,25 @@ function Navbar() {
                 />
                 <motion.div
                   initial={{ x: '100%' }}
-                  animate={{ x:0 }}
-                  exit={{ x:'100%' }}
-                  transition={{ type:'spring' , stiffness:300 , damping:30 }}
-                  className='fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 flex flex-colp-6 gap=4'
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ duration: 0.35, ease: "easeInOut" }}
+                  className='fixed top-0 left-0 h-screen w-full bg-blue-400 z-50 flex flex-col p-6'
                   ref={menuRef}
                 >
+                  <div className='flex justify-between items-center mb-6 text-black'>
+                    <h2 className='text-xl font-bold'>Menu</h2>
+                    <button className='text-2xl' onClick={() => setOpen(false)}>✕</button>
+                  </div>
                   {navItems.map((item) => (
                     <motion.button
                       key={item.name}
-                      whileHover={{ backgroundColor: "#f3f4f6" }}
+                      whileHover={{ scale: 0.95 }}
                       onClick={() => {
                         navigate(item.path)
                         setOpen(false)
                       }}
-                      className='text-gray-700 font-medium px-3 py-2 text-left rounded'
+                      className='text-lg font-medium text-white py-3 border-b'
                     >
                       {item.name}
                     </motion.button>
@@ -123,7 +127,7 @@ function Navbar() {
                   <motion.button
                     whileHover={{ backgroundColor: "#fef2f2" }}
                     onClick={handleLogout}
-                    className='text-red-500 font-medium px-3 py-2 text-left rounded'
+                    className='text-red-500 font-medium px-3 py-2 rounded justify-center text-center'
                   >
                     Log Out
                   </motion.button>
