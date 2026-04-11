@@ -28,19 +28,14 @@ func Connect(){
 		log.Fatal("DB_DSN is not set")
 	}
 	
+	cert := os.Getenv("DB_CERT")
+	if cert == "" {
+		log.Fatal("DB_CERT is not set")
+	}
+
 	rootCertPool := x509.NewCertPool()
-	
-	certPath := os.Getenv("DB_CERT_PATH")
-	if certPath == "" {
-		certPath = "cert.pem"
-	}
 
-	pem,err := os.ReadFile("cert.pem")
-
-	if err != nil {
-		log.Fatal("Failed to read CA cert:",err)
-	}
-	if ok := rootCertPool.AppendCertsFromPEM(pem); !ok {
+	if ok := rootCertPool.AppendCertsFromPEM([]byte(cert)); !ok {
 		log.Fatal("Failed to append CA cert")
 	}
 	tlsConfig := &tls.Config{
