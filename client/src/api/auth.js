@@ -21,5 +21,17 @@ export const RefreshToken = ()=>{
 }
 
 export const DeleteUser = (id)=>{
-    return api.delete(`auth/user/${id}`)
+    return api.delete(`/auth/user/${id}`)
+}
+
+export const BanUser = (id)=>{
+    return api.patch(`/auth/user/ban/${id}`)
+}
+
+export const UnBanUser = (id) => {
+    return api.patch(`/auth/user/unban/${id}`)
+}
+
+export const BanStatus = (id)=>{
+    return api.get(`/auth/user/ban-status/${id}`)
 }

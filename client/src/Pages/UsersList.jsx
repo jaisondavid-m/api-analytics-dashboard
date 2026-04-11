@@ -1,19 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from "../Components/Navbar"
 import { GetUsersList } from '../api/analytics'
+import { BanUser, UnBanUser } from "../api/auth.js"
 // import { DeleteUser } from '../api/auth'
 import Loading from "../Components/Loading.jsx"
 
 
 function UsersList() {
   const [users, setUsers] = useState([])
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
+  const [banloading, setBanLoading] = useState(false)
+  const STORAGE_KEY = "demo_banned_users"
+  const getBannedUsers = () => {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")
+  }
+  const saveBannedUsers = (data) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
         const res = await GetUsersList()
-        setUsers(res.data || [])
+        const bannedUsers = getBannedUsers()
+        const updateUsers = (res.data || []).map((user) => ({
+          ...user,
+          isBanned: bannedUsers.includes(user.ID)
+        }))
+        setUsers(updateUsers)
       } catch (err) {
         alert("error", err)
       } finally {
@@ -24,18 +38,57 @@ function UsersList() {
   }, [])
   const handleDeleteUser = async (id) => {
     const confirmDelete = window.confirm(" Delete This User ? ")
-    if(!confirmDelete) return
+    if (!confirmDelete) return
     try {
-      // await DeleteUser(id) for project presentation to public it is in off
-      setUsers((prev)=>prev.filter((user)=>user.ID !== id))
-    } catch (err){
+      await DeleteUser(id)
+    } catch (err) {
       alert("Failed to Delete User")
     }
   }
-  if(loading){
-    <div>
-      <Loading/>
-    </div>
+  const FakeHandleDeleteUser = (id) => {
+    const confirmDelete = window.confirm("Delete this user?")
+    if (!confirmDelete) return
+    setUsers((prev) => prev.filter((user) => user.ID !== id))
+  }
+  const handleBanToggle = async (id, isBanned) => {
+    try {
+      setBanLoading(true)
+      if (isBanned) {
+        await UnBanUser(id)
+      } else {
+        await BanUser(id)
+      }
+      setUsers((prev) => prev.map((user) => user.ID === id ? { ...user, isBanned: !isBanned } : user))
+    } catch (err) {
+      alert("Failed to Update Ban Status")
+    } finally {
+      setBanLoading(false)
+    }
+  }
+  const fakeHandleBanToggle = async (id, isBanned) => {
+    try {
+      setBanLoading(true)
+      let bannedUsers = getBannedUsers()
+      if (isBanned) {
+        bannedUsers = bannedUsers.filter((userId) => userId !== id)
+      } else {
+        bannedUsers.push(id)
+      }
+      saveBannedUsers(bannedUsers)
+      setUsers((prev) => prev.map((user) => user.ID === id ? { ...user, isBanned: !isBanned } : user))
+    } catch (err) {
+      alert("Failed to update status")
+    } finally {
+      setBanLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className='h-screen flex items-center justify-center'>
+        <Loading />
+      </div>
+    )
   }
   return (
     <div className='h-screen bg-gray-50'>
@@ -52,6 +105,7 @@ function UsersList() {
                 <th className='px-4 py-3'>IP Address</th>
                 <th className='px-4 py-3'>Last Login</th>
                 <th className='px-4 py-3'>Created At</th>
+                <th className='px-4 py-3 text-center'>Status</th>
                 <th className='px-4 py-3 text-center'>Action</th>
               </tr>
             </thead>
@@ -73,18 +127,29 @@ function UsersList() {
                       : "-"}
                   </td>
                   <td className='px-4 py-3 text-center'>
-                      <button
-                        onClick={()=>handleDeleteUser(user.ID)}
-                        className='px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition'
-                      >
+                    <button
+                      onClick={() => fakeHandleBanToggle(user.ID, user.isBanned)}
+                      className={`px-3 py-1 rounded-lg text-xs font-medium text-white transition ${user.isBanned
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-yellow-500 hover:bg-yellow-600"
+                        }`}
+                    >
+                      {banloading ? "Please wait.." : user.isBanned ? "UnBan" : "🚫 Ban"}
+                    </button>
+                  </td>
+                  <td className='px-4 py-3 text-center'>
+                    <button
+                      onClick={() => FakeHandleDeleteUser(user.ID)}
+                      className='px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition'
+                    >
                       🗑 Delete
-                      </button>
+                    </button>
                   </td>
                 </tr>
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan="7" className='text-center py-6 text-gray-500'>
+                  <td colSpan="8" className='text-center py-6 text-gray-500'>
                     No Users Found
                   </td>
                 </tr>
