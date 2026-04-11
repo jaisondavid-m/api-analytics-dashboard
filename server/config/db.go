@@ -29,7 +29,14 @@ func Connect(){
 	}
 	
 	rootCertPool := x509.NewCertPool()
+	
+	certPath := os.Getenv("DB_CERT_PATH")
+	if certPath == "" {
+		certPath = "cert.pem"
+	}
+
 	pem,err := os.ReadFile("cert.pem")
+
 	if err != nil {
 		log.Fatal("Failed to read CA cert:",err)
 	}
@@ -45,9 +52,15 @@ func Connect(){
 		log.Fatal(err)
 	}
 
-	DB,err = gorm.Open(mysql.Open(dsn),&gorm.Config{})
-	if err!=nil{
-		log.Fatal("Failed to connect DB:",err)
+	for i := 1; i<= 5; i++ {
+		DB,err = gorm.Open(mysql.Open(dsn),&gorm.Config{
+			PrepareStmt: true,
+		})
+		if err == nil {
+			break
+		}
+		log.Println("Retrying DB Connection...",i)
+		time.Sleep(3 * time.Second)
 	}
 
 	sqlDB , err := DB.DB()
@@ -60,8 +73,8 @@ func Connect(){
 		log.Fatal("DB ping Failed:",err)
 	}
 
-	sqlDB.SetMaxOpenConns(50)
-	sqlDB.SetMaxIdleConns(25)
+	sqlDB.SetMaxOpenConns(10)
+	sqlDB.SetMaxIdleConns(5)
 	sqlDB.SetConnMaxLifetime(30*time.Minute)
 	sqlDB.SetConnMaxIdleTime(10*time.Minute)
 

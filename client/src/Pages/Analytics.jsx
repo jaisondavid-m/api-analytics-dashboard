@@ -1,10 +1,11 @@
-import React, { useState } from "react"
+import React, { lazy, useState } from "react"
 import { BarChart3 , Users , Globe , Calendar, UsersIcon } from "lucide-react"
 import Navbar from "../Components/Navbar.jsx"
-import MyUsage from "./MyUsage.jsx"
-import AllUsersUsagePage from "./AllUsersUsage.jsx"
-import CountryUsagePage from "./CountryUsagePage.jsx"
-import DailyUsagePage from "./DailyUsagePage.jsx"
+
+const MyUsage = lazy(()=>import("./MyUsage.jsx"))
+const AllUsersUsagePage = lazy(()=>import("./AllUsersUsage.jsx"))
+const CountryUsagePage = lazy(()=>import("./CountryUsagePage.jsx"))
+const DailyUsagePage = lazy(()=>import("./DailyUsagePage.jsx"))
 
 function Analytics() {
     const [activeTab, setActiveTab] = useState("my")

@@ -2,10 +2,12 @@ package main
 
 import (
 	"log"
-	"time"
+	"os"
+	"net/http"
 	"server/config"
 	"server/middleware"
 	"server/routes"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -26,22 +28,41 @@ func main(){
 
 	defer sqlDB.Close()
 
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:5173"
+	}
+
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:5173"},
+		AllowOrigins: []string{frontendURL},
 		AllowMethods: []string{"GET","POST","PUT","PATCH","DELETE"},
 		AllowHeaders: []string{"Origin","Content-Type","Authorization"},
 		AllowCredentials: true,
 	}))
+	r.Use(func(c *gin.Context) {
+		c.Header("X-Frame-Options","DENY")
+		c.Header("X-Content-Type-Options","nosniff")
+		c.Header("Referrer-policy","strict-origin-when-cross-origin")
+		c.Next()
+	})
 	r.Use(middleware.OptionalAuth())
 	r.Use(middleware.RateLimit(100,time.Minute))
 	r.Use(middleware.RequestLogger(config.DB))
 	r.Use(middleware.LatencyMiddleware())
+	r.GET("/health",func(c *gin.Context) {
+		c.JSON(http.StatusOK,gin.H{"status":"ok"})
+	})
 	routes.SetUpRoutes(r)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+
 	log.Println("Server Running on Port 8000")
-	if err := r.Run(":8000");err!=nil{
+	if err := r.Run(":" + port);err!=nil{
 		log.Fatal(err)
 	}
 }
