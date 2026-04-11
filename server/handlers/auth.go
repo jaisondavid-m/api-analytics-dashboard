@@ -142,3 +142,101 @@ func Me(c *gin.Context) {
 		},
 	})
 }
+func DeleteUser(c *gin.Context) {
+	id := c.Param("id")
+
+	var user models.User
+
+	if err := config.DB.First(&user,id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound,gin.H{
+				"error":"User Not Found",
+			})
+		}
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"error":"DataBase error",
+			
+		})
+		return
+	}
+	if err := config.DB.Delete(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"error":"Failed to delete user",
+		})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{
+		"message":"User deleted Successfully",
+	})
+}
+
+func BanUser(c *gin.Context) {
+	id := c.Param("id")
+	var user models.User
+	if err := config.DB.First(&user,id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound,gin.H{
+				"error":"User not Found",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"error":"DataBase Error",
+		})
+		return
+	}
+	if user.IsBanned {
+		c.JSON(http.StatusBadRequest,gin.H{
+			"error":"User is Already Banned",
+		})
+	}
+
+	if err := config.DB.Model(&user).Update("is_banned",true).Error; err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"error":"Failed to ban user",
+		})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{
+		"message":"User Banned SuccessFully",
+	})
+}
+
+func UnbanUser(c *gin.Context) {
+	id := c.Param("id")
+	var user models.User
+	if err := config.DB.First(&user,id).Error; err != nil {
+		c.JSON(http.StatusNotFound,gin.H{"error":"User Not Found"})
+		return
+	}
+	if err := config.DB.Model(&user).Update("is_banned",false).Error; err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"error":"Failed to unban user",
+		})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{
+		"message":"User Unbanned Successfully",
+	})
+}
+
+func CheckBanStatus(c *gin.Context) {
+	id := c.Param("id")
+	var user models.User
+
+	if err := config.DB.First(&user,id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound,gin.H{
+				"error":"User Not Found",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError,gin.H{
+			"error":"Database Error",
+		})
+		return
+	}
+	c.JSON(http.StatusOK,gin.H{
+		"is_banned":user.IsBanned,
+	})
+}

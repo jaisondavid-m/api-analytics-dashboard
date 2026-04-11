@@ -3,6 +3,7 @@ import { getCurrentUser, loginUser, registerUser } from '../api/auth'
 import { useNavigate } from "react-router-dom"
 import { motion , AnimatePresence } from "framer-motion"
 import { useAuth } from '../context/AuthContext'
+import { UserPlus , ArrowRight } from "lucide-react"
 
 function AuthPage() {
     const { setUser , user,loading } = useAuth()
@@ -46,6 +47,43 @@ function AuthPage() {
             setIsLoading(false)
         }
     }
+    const generateGuestCredentials = () => {
+        const random = Math.random().toString(36).substring(2,8)
+        const timestamp = Date.now().toString().slice(-4)
+        const user_id = `guest_${random}${timestamp}`
+        const password = random + timestamp
+        return {
+            name: "Guest User",
+            user_id,
+            password,
+        }
+    }
+    const handleGuestLogin = async () => {
+        try {
+            setIsLoading(true)
+            setMessage("")
+            setType("")
+
+            const guest = generateGuestCredentials()
+
+            await registerUser(guest)
+
+            const me = await getCurrentUser()
+
+            setUser(me.data.user)
+
+            setType("Success")
+            setMessage("Logged in as Guest")
+
+            navigate("/home")
+
+        } catch (err) {
+            setType("error")
+            setMessage(err.response?.data?.error || "Guest Login Failed" )
+        } finally {
+            setIsLoading(false)
+        }
+    }
     useEffect(()=>{
         if(!loading && user){
             navigate("/home")
@@ -72,6 +110,18 @@ function AuthPage() {
                 className='bg-white/5 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 w-full max-w-md transition-all'
             >
                 <h1 className='text-3xl font-extrabold text-center text-white mb-6'>API Analytics Site</h1>
+                <div className='mb-5 rounded-2xl border border-amber-400/30 bg-amber/10 px-4 py-3 backdrop-blur-md'>
+                    <div className='flex items-start gap-3'>
+                        <div className='mt-0.5 text-amber-300'>⚠️</div>
+                        <div>
+                            <p className='text-sm font-semibold text-amber-200'>Network Recommendation</p>
+                            <p className='text-xs sm:text-sm text-amber-100/90 leading-relaxed'>
+                                Use a Personal network for better accessibility and performance.
+                                Organizational or restricted networks may block access or cause slower connection
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <div className='bg-white/10 backdrop-blur-md shadow-inner p-6 sm:p-8 rounded-2xl w-full'>
                     <div className='flex gap-2 sm:gap-4 mb-4 bg-white/10 rounded-xl p-1'>
                         <motion.button 
@@ -121,6 +171,29 @@ function AuthPage() {
                             {isLoading ? "Please wait..." : (isLogin ? "Login" : "Register")}
                         </motion.button>
                     </motion.form>
+                    <div className='flex items-center gap-2 my-4'>
+                        <div className='flex-1 h-px bg-white/20'/>
+                        <span className='text-white/40 text-xs'>OR</span>
+                        <div className='flex-1 h-px bg-white/20'/>
+                    </div>
+                    <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={handleGuestLogin}
+                        className={`mt-6 group cursor-pointer relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl
+                                    p-5 flex items-center justify-between transition-all duration-300 hover:border-blue-400/40 hover:shadow-blue-500/10 ${isLoading ? "opacity-50 pointer-events-none" : "" } `}
+                    >
+                        <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300 bg-gradient-to-r from-blue-500/10 via-transparent to-blue-500/10'/>
+                        <div className='flex items-center gap-4 z-10'>
+                            <div className='p-3 rounded-xl bg-blue-500/20 text-blue-400'>
+                                <UserPlus className='w-5 h-5' />
+                            </div>
+                            <div>
+                                <h3 className='text-white font-semibold text-sm sm:text-base'>Enter as Guest</h3>
+                                <p className='text-white/50 text-xs sm:text-sm'>Instant Access without creating an account</p>
+                            </div>
+                        </div> 
+                    </motion.div>
                 </div>
             </motion.div>
         </div>

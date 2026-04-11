@@ -19,3 +19,7 @@ export const getCurrentUser = ()=>{
 export const RefreshToken = ()=>{
     return api.get("/auth/refresh")
 }
+
+export const DeleteUser = (id)=>{
+    return api.delete(`auth/user/${id}`)
+}

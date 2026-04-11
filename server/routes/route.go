@@ -26,6 +26,10 @@ func SetUpRoutes(r *gin.Engine) {
 	protected.Use(middleware.AuthMiddleware())
 	{
 		protected.GET("/me", handlers.Me)
+		protected.DELETE("/user/:id",handlers.DeleteUser)
+		protected.PATCH("/user/ban/:id",handlers.BanUser)
+		protected.PATCH("/user/unban/:id",handlers.UnbanUser)
+		protected.GET("/user/ban-status/:id",handlers.CheckBanStatus)
 		protected.GET("/logs", handlers.GetLogs(config.DB))
 		protected.GET("/users",handlers.GetUsers(config.DB))
 		protected.GET("/usage/users",handlers.GetUserAPIUsage(config.DB))
