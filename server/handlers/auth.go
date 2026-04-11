@@ -98,7 +98,7 @@ func Logout(c *gin.Context) {
 		"",
 		-1,
 		"/",
-		"localhost",
+		"https://api-analytics-dashboard-blush.vercel.app",
 		false,
 		true,
 	)
@@ -107,7 +107,7 @@ func Logout(c *gin.Context) {
 		"",
 		-1,
 		"/",
-		"localhost",
+		"https://api-analytics-dashboard-blush.vercel.app",
 		false,
 		true,
 	)

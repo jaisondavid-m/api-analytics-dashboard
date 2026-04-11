@@ -17,7 +17,7 @@ func SetCookie(c *gin.Context, accessToken, refreshToken string) {
 		refreshToken,
 		60*60*24*7,
 		"/",
-		"localhost",
+		"https://api-analytics-dashboard-blush.vercel.app",
 		false,
 		true,
 	)
