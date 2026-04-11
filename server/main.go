@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"net/http"
 	"server/config"
 	"server/middleware"
 	"server/routes"
@@ -51,9 +50,6 @@ func main(){
 	r.Use(middleware.RateLimit(100,time.Minute))
 	r.Use(middleware.RequestLogger(config.DB))
 	r.Use(middleware.LatencyMiddleware())
-	r.GET("/health",func(c *gin.Context) {
-		c.JSON(http.StatusOK,gin.H{"status":"ok"})
-	})
 	routes.SetUpRoutes(r)
 
 	port := os.Getenv("PORT")
