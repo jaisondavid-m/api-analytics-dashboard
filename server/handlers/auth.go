@@ -47,9 +47,9 @@ func Register(c *gin.Context) {
 		return
 	}
 	// token, err := utils.GenerateToken(user.UserID, user.Role)
-	accessToken , _ := utils.GenerateAccessToken(user.UserID,user.Role)
+	accessToken, _ := utils.GenerateAccessToken(user.UserID, user.Role)
 	refreshToken, _ := utils.GenerateRefreshToken(user.UserID)
-	utils.SetCookie(c, accessToken , refreshToken)
+	utils.SetCookie(c, accessToken, refreshToken)
 	c.JSON(http.StatusCreated, gin.H{"message": "User Register Successfully & Logged in"})
 }
 
@@ -85,9 +85,9 @@ func Login(c *gin.Context) {
 		return
 	}
 	// token, err := utils.GenerateToken(user.UserID, user.Role)
-	accessToken , _ := utils.GenerateAccessToken(user.UserID,user.Role)
+	accessToken, _ := utils.GenerateAccessToken(user.UserID, user.Role)
 	refreshToken, _ := utils.GenerateRefreshToken(user.UserID)
-	utils.SetCookie(c, accessToken , refreshToken)
+	utils.SetCookie(c, accessToken, refreshToken)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login Successfully",
 	})
@@ -134,7 +134,7 @@ func Me(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"user": gin.H{
-			"id":				user.ID,
+			"id":            user.ID,
 			"user_id":       user.UserID,
 			"name":          user.Name,
 			"role":          user.Role,
@@ -147,76 +147,75 @@ func DeleteUser(c *gin.Context) {
 
 	var user models.User
 
-	if err := config.DB.First(&user,id).Error; err != nil {
+	if err := config.DB.First(&user, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound,gin.H{
-				"error":"User Not Found",
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "User Not Found",
 			})
 		}
-		c.JSON(http.StatusInternalServerError,gin.H{
-			"error":"DataBase error",
-			
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "DataBase error",
 		})
 		return
 	}
 	if err := config.DB.Delete(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{
-			"error":"Failed to delete user",
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to delete user",
 		})
 		return
 	}
-	c.JSON(http.StatusOK,gin.H{
-		"message":"User deleted Successfully",
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted Successfully",
 	})
 }
 
 func BanUser(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
-	if err := config.DB.First(&user,id).Error; err != nil {
+	if err := config.DB.First(&user, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound,gin.H{
-				"error":"User not Found",
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "User not Found",
 			})
 			return
 		}
-		c.JSON(http.StatusInternalServerError,gin.H{
-			"error":"DataBase Error",
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "DataBase Error",
 		})
 		return
 	}
 	if user.IsBanned {
-		c.JSON(http.StatusBadRequest,gin.H{
-			"error":"User is Already Banned",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User is Already Banned",
 		})
 	}
 
-	if err := config.DB.Model(&user).Update("is_banned",true).Error; err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{
-			"error":"Failed to ban user",
+	if err := config.DB.Model(&user).Update("is_banned", true).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to ban user",
 		})
 		return
 	}
-	c.JSON(http.StatusOK,gin.H{
-		"message":"User Banned SuccessFully",
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User Banned SuccessFully",
 	})
 }
 
 func UnbanUser(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
-	if err := config.DB.First(&user,id).Error; err != nil {
-		c.JSON(http.StatusNotFound,gin.H{"error":"User Not Found"})
+	if err := config.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User Not Found"})
 		return
 	}
-	if err := config.DB.Model(&user).Update("is_banned",false).Error; err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{
-			"error":"Failed to unban user",
+	if err := config.DB.Model(&user).Update("is_banned", false).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to unban user",
 		})
 		return
 	}
-	c.JSON(http.StatusOK,gin.H{
-		"message":"User Unbanned Successfully",
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User Unbanned Successfully",
 	})
 }
 
@@ -224,19 +223,19 @@ func CheckBanStatus(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
 
-	if err := config.DB.First(&user,id).Error; err != nil {
+	if err := config.DB.First(&user, id).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound,gin.H{
-				"error":"User Not Found",
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "User Not Found",
 			})
 			return
 		}
-		c.JSON(http.StatusInternalServerError,gin.H{
-			"error":"Database Error",
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Database Error",
 		})
 		return
 	}
-	c.JSON(http.StatusOK,gin.H{
-		"is_banned":user.IsBanned,
+	c.JSON(http.StatusOK, gin.H{
+		"is_banned": user.IsBanned,
 	})
 }

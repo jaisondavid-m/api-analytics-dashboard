@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 	"server/config"
 	"server/middleware"
 	"server/routes"
@@ -34,6 +35,7 @@ func main(){
 		AllowCredentials: true,
 	}))
 	r.Use(middleware.OptionalAuth())
+	r.Use(middleware.RateLimit(100,time.Minute))
 	r.Use(middleware.RequestLogger(config.DB))
 	r.Use(middleware.LatencyMiddleware())
 	routes.SetUpRoutes(r)

@@ -29,16 +29,27 @@ function HeroSection() {
         >
           Track API requests , debug issues and analayze user activity in real time - all in one powerful dashboard
         </motion.p>
-        <motion.div
-          initial={{opacity:0,y:20}}
-          animate={{opacity:1,y:0}}
-          transition={{delay:0.4}}
-          className='mt-10'
-        >
-          <Link to='/logs' className='px-10 py-4 md:px-12 md:py-5 bg-blue-400 text-lg md:text-xl font-semibold rounded-2xl shadow-lg shadow-blue-900/50 transform transition duration-300 hover:scale-105 hover:brightness-110 text-white'>
-            View Logs →
-          </Link>
-        </motion.div>
+        <div className='flex flex-col gap-y-12'>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className='mt-10'
+          >
+            <Link to='/logs' className='px-10 py-4 md:px-12 md:py-5 bg-blue-400 text-lg md:text-xl font-semibold rounded-2xl shadow-lg shadow-blue-900/50 transform transition duration-300 hover:scale-105 hover:brightness-110 text-white'>
+              View Logs →
+            </Link>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Link to='/analytics' className='px-10 py-4 md:px-12 md:py-5 bg-blue-400 text-lg md:text-xl font-semibold rounded-2xl shadow-lg shadow-blue-900/50 transform transition duration-300 hover:scale-105 hover:brightness-110 text-white'>
+              View Analytics →
+            </Link>
+          </motion.div>
+        </div>
 
       </div>
     </div>
