@@ -55,9 +55,15 @@ func Connect(){
 		log.Fatal("Failed to get DB instance:",err)
 	}
 
-	sqlDB.SetMaxOpenConns(25)
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetConnMaxLifetime(5*time.Minute)
+	err = sqlDB.Ping()
+	if err != nil {
+		log.Fatal("DB ping Failed:",err)
+	}
+
+	sqlDB.SetMaxOpenConns(50)
+	sqlDB.SetMaxIdleConns(25)
+	sqlDB.SetConnMaxLifetime(30*time.Minute)
+	sqlDB.SetConnMaxIdleTime(10*time.Minute)
 
 	log.Println("DB connected Successfully")
 }
