@@ -69,13 +69,13 @@ function Profile() {
                 <div className='space-y-3'>
                     <motion.button
                         whileTap={{scale:0.95}}
-                        className='w-full flex items-center px-4 py-2 gap-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition'
+                        className='w-full flex items-center justify-center px-4 py-2 gap-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition'
                     >
                         <Edit size={16}/> Edit Profile
                     </motion.button>
                     <motion.button
                         whileTap={{scale:0.95}}
-                        onClick={handleLogout}
+                        onClick={()=>{handleLogout,alert("Will be added an future ! stay connected")}}
                         className='w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg cursor-pointer transition'
                     >
                         <LogOut size={16}/> Logout

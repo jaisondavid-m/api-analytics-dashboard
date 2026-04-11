@@ -38,9 +38,9 @@ function Navbar() {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Logs", path: "/logs" },
-    { name: "Profile", path: "/profile" },
     { name: "UserList", path: "/users" },
-    { name: "Analytics", path: "/analytics" }
+    { name: "Analytics", path: "/analytics" },
+    { name: "Profile", path: "/profile" },
   ]
 
   return (

@@ -10,7 +10,7 @@ import (
 
 func LatencyMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if os.Getenv("ENV") == "development" {
+		if os.Getenv("ENV") != "development" {
 			time.Sleep(time.Duration(rand.IntN(400)+100)*time.Millisecond)
 		}
 		c.Next()
