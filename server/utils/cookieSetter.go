@@ -1,15 +1,37 @@
 package utils
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+	"os"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+)
+
+func cookieSecurity() (http.SameSite, bool) {
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:5173"
+	}
+
+	if strings.HasPrefix(strings.ToLower(frontendURL), "https://") {
+		return http.SameSiteNoneMode, true
+	}
+
+	return http.SameSiteLaxMode, false
+}
 
 func SetCookie(c *gin.Context, accessToken, refreshToken string) {
+	sameSite, secure := cookieSecurity()
+	c.SetSameSite(sameSite)
+
 	c.SetCookie(
 		"access_token",
 		accessToken,
 		60*15,
 		"/",
-		"localhost",
-		false,
+		"",
+		secure,
 		true,
 	)
 	c.SetCookie(
@@ -17,8 +39,16 @@ func SetCookie(c *gin.Context, accessToken, refreshToken string) {
 		refreshToken,
 		60*60*24*7,
 		"/",
-		"https://api-analytics-dashboard-blush.vercel.app",
-		false,
+		"",
+		secure,
 		true,
 	)
+}
+
+func ClearAuthCookies(c *gin.Context) {
+	sameSite, secure := cookieSecurity()
+	c.SetSameSite(sameSite)
+
+	c.SetCookie("access_token", "", -1, "/", "", secure, true)
+	c.SetCookie("refresh_token", "", -1, "/", "", secure, true)
 }

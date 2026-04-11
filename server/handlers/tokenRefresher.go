@@ -23,14 +23,6 @@ func Refresh(c *gin.Context){
 		c.JSON(http.StatusInternalServerError,gin.H{"error":"Server Error"})
 		return
 	}
-	c.SetCookie(
-		"access_token",
-		newAccessToken,
-		60*15,
-		"/",
-		"localhost",
-		false,
-		true,
-	)
+	utils.SetCookie(c, newAccessToken, refreshToken)
 	c.JSON(http.StatusOK,gin.H{"message":"Token Refreshed"})
 }

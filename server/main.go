@@ -34,8 +34,9 @@ func main(){
 
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
+	allowOrigins := []string{frontendURL, "http://localhost:5173"}
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://api-analytics-dashboard-blush.vercel.app"},
+		AllowOrigins: allowOrigins,
 		AllowMethods: []string{"GET","POST","PUT","PATCH","DELETE"},
 		AllowHeaders: []string{"Origin","Content-Type","Authorization"},
 		AllowCredentials: true,

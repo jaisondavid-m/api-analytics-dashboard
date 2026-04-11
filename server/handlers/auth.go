@@ -93,24 +93,7 @@ func Login(c *gin.Context) {
 	})
 }
 func Logout(c *gin.Context) {
-	c.SetCookie(
-		"access_token",
-		"",
-		-1,
-		"/",
-		"https://api-analytics-dashboard-blush.vercel.app",
-		false,
-		true,
-	)
-	c.SetCookie(
-		"refresh_token",
-		"",
-		-1,
-		"/",
-		"https://api-analytics-dashboard-blush.vercel.app",
-		false,
-		true,
-	)
+	utils.ClearAuthCookies(c)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Logged out successfully",
