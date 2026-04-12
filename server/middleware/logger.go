@@ -32,7 +32,15 @@ func RequestLogger(db *gorm.DB) gin.HandlerFunc {
 		status := c.Writer.Status()
 		method := c.Request.Method
 		path := c.Request.URL.Path
-		ip := c.ClientIP()
+		ip := c.GetHeader("X-Forwarded-For")
+
+		if ip == "" {
+			ip = c.GetHeader("X-Real-IP")
+		}
+
+		if ip == "" {
+			ip = c.ClientIP()
+		}
 		userID, _ := c.Get("user_id")
 
 		maskedBody := ""

@@ -11,18 +11,19 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
+
 func setupRoutes(r *gin.Engine) {
 	r.GET("/test", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "working"})
 	})
 }
-func main(){
+func main() {
 	config.Connect()
 	config.Migrate()
 
-	sqlDB,err := config.DB.DB()
-	if err!=nil{
-		log.Fatal("Failed to Load DataBase",err)
+	sqlDB, err := config.DB.DB()
+	if err != nil {
+		log.Fatal("Failed to Load DataBase", err)
 	}
 
 	defer sqlDB.Close()
@@ -33,22 +34,22 @@ func main(){
 	}
 
 	r := gin.Default()
-	r.SetTrustedProxies(nil)
+	r.SetTrustedProxies([]string{})
 	allowOrigins := []string{frontendURL, "http://localhost:5173"}
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: allowOrigins,
-		AllowMethods: []string{"GET","POST","PUT","PATCH","DELETE"},
-		AllowHeaders: []string{"Origin","Content-Type","Authorization"},
+		AllowOrigins:     allowOrigins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
 	}))
 	r.Use(func(c *gin.Context) {
-		c.Header("X-Frame-Options","DENY")
-		c.Header("X-Content-Type-Options","nosniff")
-		c.Header("Referrer-policy","strict-origin-when-cross-origin")
+		c.Header("X-Frame-Options", "DENY")
+		c.Header("X-Content-Type-Options", "nosniff")
+		c.Header("Referrer-policy", "strict-origin-when-cross-origin")
 		c.Next()
 	})
 	r.Use(middleware.OptionalAuth())
-	r.Use(middleware.RateLimit(100,time.Minute))
+	r.Use(middleware.RateLimit(100, time.Minute))
 	r.Use(middleware.RequestLogger(config.DB))
 	r.Use(middleware.LatencyMiddleware())
 	routes.SetUpRoutes(r)
@@ -59,7 +60,7 @@ func main(){
 	}
 
 	log.Println("Server Running on Port 8000")
-	if err := r.Run(":" + port);err!=nil{
+	if err := r.Run(":" + port); err != nil {
 		log.Fatal(err)
 	}
 }
